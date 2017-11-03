@@ -200,7 +200,7 @@ class ContentGenerator {
       }
       if (block.tagName === 'pre') {
         ({text, characterMeta} = trimLeadingNewline(text, characterMeta));
-      } else {
+      } else if (block.type !== 'atomic') {
         ({text, characterMeta} = collapseWhiteSpace(text, characterMeta));
       }
       // Previously we were using a placeholder for soft breaks. Now that we
@@ -282,6 +282,13 @@ class ContentGenerator {
     let tagName = element.nodeName.toLowerCase();
     let type: ?string;
     let data: ?BlockData;
+
+    const inlineAttachmentBlock = this.__getPossibleThreadsInlineAttachment(element);
+    if (inlineAttachmentBlock) {
+      this.blockList.push(inlineAttachmentBlock);
+      return;
+    }
+
     if (customBlockFn) {
       let customBlock = customBlockFn(element);
       if (customBlock != null) {
@@ -418,6 +425,39 @@ class ContentGenerator {
     );
     return this.contentStateForEntities.getLastCreatedEntityKey();
   }
+
+  __getPossibleThreadsInlineAttachment(element) {
+    if (element.tagName === 'DIV' && element.getAttribute('data-threads-type') === 'attachment') {
+      let data = {};
+      try {
+        data = JSON.parse(element.getAttribute('data-threads-data'));
+      } catch (ex) {
+        // do nothing
+      }
+      const entityKey = this.createEntity('image', toStringMap(data), 'IMMUTABLE');
+      const text = " ";
+      let charMetadata = CharacterMetadata.create({
+        style: NO_STYLE,
+        entity: entityKey,
+      });
+      let seq: CharacterMetaSeq = Repeat(charMetadata, text.length);
+
+      let block: ParsedBlock = {
+        tagName: element.nodeName.toLowerCase(),
+        textFragments: [{
+          text: text,
+          characterMeta: seq,
+        }],
+        type: 'atomic',
+        styleStack: [NO_STYLE],
+        entityStack: [NO_ENTITY],
+        depth: 0,
+        data: {},
+      };
+      return block;
+    }
+  }
+
 }
 
 function trimLeadingNewline(
