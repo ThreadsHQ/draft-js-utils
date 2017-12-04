@@ -255,6 +255,12 @@ var ContentGenerator = function () {
         return;
       }
 
+      if (element.tagName === 'LI' && element.className.indexOf('public-DraftStyleDefault-depth1') >= 0) {
+        this.depth = 1;
+      } else if (element.tagName === 'LI' && element.className.indexOf('public-DraftStyleDefault-depth0') >= 0) {
+        this.depth = 0;
+      }
+
       if (customBlockFn) {
         var customBlock = customBlockFn(element);
         if (customBlock != null) {
@@ -281,13 +287,13 @@ var ContentGenerator = function () {
         type: type,
         styleStack: [NO_STYLE],
         entityStack: [NO_ENTITY],
-        depth: hasDepth ? this.depth : 0,
+        depth: this.depth,
         data: data
       };
       if (allowRender) {
         this.blockList.push(block);
         if (hasDepth) {
-          this.depth += 1;
+          // this.depth += 1;
         }
       }
       this.blockStack.push(block);
@@ -296,7 +302,7 @@ var ContentGenerator = function () {
       }
       this.blockStack.pop();
       if (allowRender && hasDepth) {
-        this.depth -= 1;
+        // this.depth -= 1;
       }
     }
   }, {

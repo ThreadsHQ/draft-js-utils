@@ -289,6 +289,12 @@ class ContentGenerator {
       return;
     }
 
+    if (element.tagName === 'LI' && element.className.indexOf('public-DraftStyleDefault-depth1') >= 0) {
+      this.depth = 1;
+    } else if (element.tagName === 'LI' && element.className.indexOf('public-DraftStyleDefault-depth0') >= 0) {
+      this.depth = 0;
+    }
+
     if (customBlockFn) {
       let customBlock = customBlockFn(element);
       if (customBlock != null) {
@@ -315,13 +321,13 @@ class ContentGenerator {
       type: type,
       styleStack: [NO_STYLE],
       entityStack: [NO_ENTITY],
-      depth: hasDepth ? this.depth : 0,
+      depth: this.depth,
       data,
     };
     if (allowRender) {
       this.blockList.push(block);
       if (hasDepth) {
-        this.depth += 1;
+        // this.depth += 1;
       }
     }
     this.blockStack.push(block);
@@ -330,7 +336,7 @@ class ContentGenerator {
     }
     this.blockStack.pop();
     if (allowRender && hasDepth) {
-      this.depth -= 1;
+      // this.depth -= 1;
     }
   }
 
