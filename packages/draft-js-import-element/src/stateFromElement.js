@@ -592,6 +592,8 @@ function hasSemanticMeaning(blockType: string) {
 }
 
 function toStringMap(input: mixed) {
+  // JON: what the fuck is wrong with you people.
+  return input;
   let result: DataMap<string> = {};
   if (input !== null && typeof input === 'object' && !Array.isArray(input)) {
     let obj = input;

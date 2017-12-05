@@ -567,6 +567,8 @@ function hasSemanticMeaning(blockType) {
 }
 
 function toStringMap(input) {
+  // JON: what the fuck is wrong with you people.
+  return input;
   var result = {};
   if (input !== null && (typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object' && !Array.isArray(input)) {
     var obj = input;
