@@ -254,6 +254,9 @@ var ContentGenerator = function () {
         this.blockList.push(inlineAttachmentBlock);
         return;
       }
+      if (element.tagName === 'DIV' && element.getAttribute('data-threads-ignore') === 'true') {
+        return;
+      }
 
       if (element.tagName === 'LI' && element.className.indexOf('public-DraftStyleDefault-depth1') >= 0) {
         this.depth = 1;
