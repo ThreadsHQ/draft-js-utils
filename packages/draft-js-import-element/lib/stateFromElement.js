@@ -258,10 +258,9 @@ var ContentGenerator = function () {
         return;
       }
 
+      // Set the depth for this node and all child nodes
       if (element.tagName === 'LI' && element.className.indexOf('public-DraftStyleDefault-depth1') >= 0) {
         this.depth = 1;
-      } else if (element.tagName === 'LI' && element.className.indexOf('public-DraftStyleDefault-depth0') >= 0) {
-        this.depth = 0;
       }
 
       if (customBlockFn) {
@@ -276,7 +275,6 @@ var ContentGenerator = function () {
         isCustomType = false;
         type = this.getBlockTypeFromTagName(tagName);
       }
-      var hasDepth = canHaveDepth(type);
       var allowRender = !_Constants.SPECIAL_ELEMENTS.hasOwnProperty(tagName);
       if (!isCustomType && !hasSemanticMeaning(type)) {
         var parent = this.blockStack.slice(-1)[0];
@@ -295,17 +293,16 @@ var ContentGenerator = function () {
       };
       if (allowRender) {
         this.blockList.push(block);
-        if (hasDepth) {
-          // this.depth += 1;
-        }
       }
       this.blockStack.push(block);
       if (element.childNodes != null) {
         Array.from(element.childNodes).forEach(this.processNode, this);
       }
       this.blockStack.pop();
-      if (allowRender && hasDepth) {
-        // this.depth -= 1;
+      if (allowRender) {
+        // Reset depth after rendering all child nodes,
+        // so eg a block after a <li> with depth=1 will have depth=0
+        this.depth = 0;
       }
     }
   }, {
