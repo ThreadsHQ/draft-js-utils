@@ -413,7 +413,9 @@ class ContentGenerator {
       // $FlowIssue
       let element: DOMElement = node;
       let tagName = element.nodeName.toLowerCase();
-      if (INLINE_ELEMENTS.hasOwnProperty(tagName)) {
+      if ((this.blockStack.slice(-1)[0] && this.blockStack.slice(-1)[0].type) === 'table-cell') {
+        this.processInlineElement(element);
+      } else if (INLINE_ELEMENTS.hasOwnProperty(tagName)) {
         this.processInlineElement(element);
       } else {
         this.processBlockElement(element);

@@ -386,7 +386,9 @@ var ContentGenerator = function () {
         // $FlowIssue
         var _element = node;
         var _tagName = _element.nodeName.toLowerCase();
-        if (_Constants.INLINE_ELEMENTS.hasOwnProperty(_tagName)) {
+        if ((this.blockStack.slice(-1)[0] && this.blockStack.slice(-1)[0].type) === 'table-cell') {
+          this.processInlineElement(_element);
+        } else if (_Constants.INLINE_ELEMENTS.hasOwnProperty(_tagName)) {
           this.processInlineElement(_element);
         } else {
           this.processBlockElement(_element);
